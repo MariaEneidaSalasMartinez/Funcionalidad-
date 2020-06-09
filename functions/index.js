@@ -11,15 +11,15 @@ const os = require('os');
 const fs = require('fs');
 const parse = require('csv-parse/lib/sync')
 
-var data = "FRESNILLO,BENITO JUAREZ"
-"FRESNILLO,BENITO JUAREZ"
-"JEREZ,RAMON LOPEZ VELARDE"
-"JEREZ,RAMON LOPEZ VELARDE"
-"OJOCALIENTE,IGNACIO ZARAGOZA"
-"OJOCALIENTE,IGNACIO ZARAGOZA"
-"GENERAL ENRIQUE ESTRADA,SALVADOR VARELA RESENDIZ"
-"NORIA DE ÁNGELES,MOISES SAENZ GARZA"
-"JIMÉNEZ DEL TEUL,PEDRO CORONEL"
+var data = `FRESNILLO,BENITO JUAREZ
+FRESNILLO,BENITO JUAREZ
+JEREZ,RAMON LOPEZ VELARDE
+JEREZ,RAMON LOPEZ VELARDE
+OJOCALIENTE,IGNACIO ZARAGOZA
+OJOCALIENTE,IGNACIO ZARAGOZA
+GENERAL ENRIQUE ESTRADA,SALVADOR VARELA RESENDIZ
+NORIA DE ÁNGELES,MOISES SAENZ GARZA
+JIMÉNEZ DEL TEUL,PEDRO CORONEL`
 
 
 exports.nuevoArchivo = functions.storage.object().onFinalize(async (object) => {
@@ -134,19 +134,20 @@ function ToJSON2(content){
     let jsonObject = {}
     for (let i = 0; i < filas.length; i++) {
       const columnas = filas[i];
+      if (columnas[0].trim() in jsonObject) {
+        //jsonObject[columnas[0].trim()] = [];
+      } else {
+        jsonObject[columnas[0].trim()] = [];
+      }
       if (columnas[0].trim() in jsonObject){
-      // El tema aun no existe, crear nueva lista de nombres
-      jsonObject[columnas[0].trim()] = [];
-        // Crear nodo nombre con lista de planteles, los planteles se toman de la columna 2
-        let valorRespuestas = columnas[1].trim().split('|');
         let municipio = {
           plantel: columnas[1].trim(),
         };
         // agregar a la lista de planteles
-        jsonObject[columnas[1].trim()].push(plantel);
+        jsonObject[columnas[0].trim()].push(municipio);
       };
-      console.log(jsonObject);
   }
+  console.log(jsonObject);
   // Guardar en base de datos
   toDB2(jsonObject)
 } catch (error) {
