@@ -11,16 +11,6 @@ const os = require('os');
 const fs = require('fs');
 const parse = require('csv-parse/lib/sync')
 
-var data = `FRESNILLO,BENITO JUAREZ
-FRESNILLO,BENITO JUAREZ
-JEREZ,RAMON LOPEZ VELARDE
-JEREZ,RAMON LOPEZ VELARDE
-OJOCALIENTE,IGNACIO ZARAGOZA
-OJOCALIENTE,IGNACIO ZARAGOZA
-GENERAL ENRIQUE ESTRADA,SALVADOR VARELA RESENDIZ
-NORIA DE ÁNGELES,MOISES SAENZ GARZA
-JIMÉNEZ DEL TEUL,PEDRO CORONEL`
-
 
 exports.nuevoArchivo = functions.storage.object().onFinalize(async (object) => {
   console.log(">>>>>>INICIO")
@@ -45,11 +35,15 @@ exports.nuevoArchivo = functions.storage.object().onFinalize(async (object) => {
   bucket.file(filename).download((err, contents) => {
     if (err) {
       console.log('error', err);
-      return null
+      return null;
     }
-      console.log(">>>>>> ", contents);
-
+    console.log(">>>>>> ", contents);
+    if (filename === "preguntas.csv") {
       toJSON(contents.toString());
+    } else if (filename === "sistemas.csv") {
+      ToJSON2(contents.toString());
+    }
+    return null;
   });
 });
 
@@ -146,15 +140,14 @@ function ToJSON2(content){
         // agregar a la lista de planteles
         jsonObject[columnas[0].trim()].push(municipio);
       };
+    }
+    console.log(jsonObject);
+    // Guardar en base de datos
+    toDB2(jsonObject)
+  } catch (error) {
+    console.log('>>> Error', error)
   }
-  console.log(jsonObject);
-  // Guardar en base de datos
-  toDB2(jsonObject)
-} catch (error) {
-  console.log('>>> Error', error)
-}
 }
 function toDB2(jsn) {
-admin.database().ref("acceso").set(jsn);
+  admin.database().ref("acceso").set(jsn);
 }
-ToJSON2(data);
