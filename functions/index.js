@@ -133,13 +133,13 @@ function ToJSON2(content){
       } else {
         jsonObject[columnas[0].trim()] = [];
       }
-      if (columnas[0].trim() in jsonObject){
+      if (columnas[0].trim() in jsonObject) {
         let municipio = {
           plantel: columnas[1].trim(),
         };
         // agregar a la lista de planteles
         jsonObject[columnas[0].trim()].push(municipio);
-      };
+      }
     }
     console.log(jsonObject);
     // Guardar en base de datos
